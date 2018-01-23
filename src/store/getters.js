@@ -1,0 +1,10 @@
+export const paperType = state => state.paperType;
+export const parts = state => state.parts;
+export const paper = state => state.paper;
+export const part = state => state.part;
+export const views = state => state.views;
+export const currentIndex = state => state.currentIndex;
+export const hasAnswer = state => state.hasAnswer;
+export const hasReport = state => state.hasReport;
+export const isStarted = state => state.isStarted;
+export const isAssignment = state => state.isAssignment;

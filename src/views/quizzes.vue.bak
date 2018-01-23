@@ -5,8 +5,7 @@
             <div class="title">{{part && part.name || '加载中...'}}</div>
             <div class="period icn-calendar">有效期5天</div>
             <div class="timing icn-clock" v-if="!isAssignment">{{remaining || '--'}}</div>
-            <!--<div class="cardView icn-list" @click="viewCard">答题卡</div>-->
-            <div class="cardView icn-list">答题卡</div>
+            <div class="cardView icn-list" @click="viewCard">答题卡</div>
         </div>
         <swiper class="subject" :options="swiperOption">
             <swiper-slide v-for="(subject, index) in views" :key="index">
@@ -20,13 +19,13 @@
 </template>
 
 <script>
-import {difference, cloneDeep, isEmpty, getStorage} from '@/assets/js/util';
-import {Swiper, SwiperSlide} from 'vue-awesome-swiper';
+import {difference, cloneDeep, isEmpty} from '@/assets/js/util';
+import {swiper, swiperSlide} from 'vue-awesome-swiper';
 import {mapGetters} from 'vuex';
 
 let interval, timeout, outs;
 
-let answer_status, is_answer, show_status;
+let paperType = 0, answer_status, is_answer, show_status;
 
 const parts = [
     {
@@ -119,27 +118,481 @@ const qsAll = [
 export default {
     data() {
         return {
-            viewRead: 0,
+            // viewCard: false,
+            // viewRead: 0,
             curIndex: 1,
+            autoplay: false,
             keep: false,
             swiperOption: {
                 loop: true,
                 autoplay: true
             },
-            parts: [],
-            paper: [],
-            part: {},
-            views: [],
-            isAssignment: false,
-            remaining: 60
+            views: []
         };
     },
-    components: {Swiper, SwiperSlide},
-    methods: {},
+    components: {swiper, swiperSlide},
+    methods: {
+        getStorage() {
+            // 获取storage数据
+            let storage = {}, stores = ['userInfo', 'type', 'hasAnswer', 'lastAnswer', 'curOrder', 'remaining', 'isAssignment', 'hasReport'];
+            stores.forEach(store => storage[store] = localStorage.getItem(store));
+            storage.lastAnswer = storage.lastAnswer || 1;
+            storage.curOrder = storage.curOrder || 1;
+            return storage;
+        },
+        onLoad({viewCard}) {
+            if (viewCard) {
+                this.viewCard = viewCard;
+            }
+            this.beginAnswer = 1;
+            // this.audioCtx = wx.createAudioContext('audios');
+            this.audioCtx = {};
+        },
+        onShow() {
+            // 记录：开始答题时间
+            let startTime = localStorage.getItem('startTime');
+            if (!startTime) {
+                localStorage.setItem('startTime', new Date().getTime());
+            }
+            // 页面显示初始页面状态
+            // type            1 尊享版  0 基础版
+            // hasAnswer       1 已开始答题
+            // isAssignment    1 已交卷
+            // curOrder        离开页面时的题号
+            // remaining       计算得出的剩余答题时间
+            let {type, hasAnswer, isAssignment, curOrder} = getStorage(), remaining = this.computeTime();
+            if (!isAssignment) {
+                // 如果未交卷
+                if (remaining > 0) {
+                    // 如果剩余时间大于0，则开始计时
+                    this.setTimeStart();
+                } else {
+                    // 否则不计时，且剩余时间显示为0
+                    remaining = 0;
+                }
+            } else {
+                // 如果已交卷，则不会进入答题页，进入报告页。
+                // 在report页面获取答题用时时长，赋值给remaining，此值在 report/index.js 存入
+                remaining = localStorage.getItem('done_time');
+            }
+            // this.setData({ type, hasAnswer, remaining, isAssignment, length: this.paper.length });
+
+            this.type = type;
+            this.hasAnswer = hasAnswer;
+            this.remaining = remaining;
+            this.isAssignment = isAssignment;
+            this.length = this.paper.length;
+            // this.parts = this.parts,
+
+            // 初始默认题
+            this.computeView(curOrder);
+            // 判断：当前题目存在音频材料，并且处于播放状态(isPlaying = 1)则继续播放音频
+            if (this.hasStuffAudio && this.isPlaying) {
+                this.audioPlay();
+            }
+        },
+        onHide() {
+            // 页面隐藏暂停倒计时
+            this.setTimeEnd();
+            // 音频材料暂停播放
+            this.audioPause(this.isPlaying);
+        },
+        onUnload() {
+            // 页面卸载停止音频播放
+            this.setTimeEnd();
+            // 音频材料停止
+            this.audioPause();
+        },
+        computeTime() {
+            // 计算时间
+            let {type, remaining} = getStorage();
+            remaining = remaining || (type ? 90 : 60);
+            if (remaining < 0) remaining = 0;
+            return remaining;
+        },
+        setTimeStart() {
+            // 开始计时
+            let that = this, remaining = this.computeTime();
+            console.log('开始计时-剩余时间', remaining);
+            // 设置：页面显示剩余时间
+            // this.setData({ remaining });
+            this.remaining = remaining;
+            interval = setInterval(() => {
+                // 开始计时
+                // 获取当前剩余时间
+                let remaining = this.computeTime();
+                // 递减
+                remaining -= 1;
+                // 如果剩余时间小于0，则设置为0
+                if (remaining < 0) {
+                    remaining = 0;
+                }
+                // 缓存剩余时间
+                localStorage.setItem('remaining', remaining);
+                // 设置：剩余时间的显示
+                // this.setData({ remaining });
+                this.remaining = remaining;
+                // 如果剩余时间为0，则停止计时
+                if (remaining === 0) {
+                    that.setTimeEnd();
+                    console.log('答题时间到', remaining);
+                } else {
+                    console.log('计时中-剩余时间', remaining);
+                }
+            }, 60000);
+        },
+        setTimeEnd() {
+            // 停止计时
+            clearInterval(interval);
+        },
+        setValue(order, value, cb) {
+            // 将答案分别存入
+            let currSubject = this.view.find(item => item.order === order),
+                part = this.parts.find(item => item.part.id === currSubject.part),
+                cardSubject = part.subjects.find(item => item.order === currSubject.order);
+
+            // 视图与试卷同步答案
+            currSubject.reply = value;
+            cardSubject.reply = value;
+            // 同步视图与答题卡数据
+            // this.setData({ view: this.view, parts: this.parts });
+            typeof cb === 'function' && cb();
+        },
+        nextView(curOrder, curValue) {
+            // 此时停止autoplay，即切换下一题完毕
+            // this.setData({ autoplay: false, keep: true });
+            this.autoplay = false;
+            this.keep = true;
+            // 提交题号及答案
+            let subject = {order: curOrder, reply: curValue};
+            // 合并参数
+            let params = Object.assign({}, cloneDeep(this.params), subject);
+            // 选择下一题
+            if (curOrder === this.paper.length) {
+                // 如果当前题号为最后一题，选择下一题操作变为展示答题卡
+                this.viewCard();
+            } else {
+                // 否则80毫秒后切换下一题
+                timeout = setTimeout(() => {
+                    // 利用swiper的autoplay属性切换下一题，不能手动干预current，否则动画会反向滑动
+                    // 提交对应题号及答案
+                    postJson('binexam/saveItem', params, () => {
+                        // this.setData({ autoplay: true });
+                        this.autoplay = true;
+                    });
+                    clearTimeout(timeout);
+                }, 80);
+                timeout = setTimeout(() => {
+                    // this.setData({ autoplay: false });
+                    this.autoplay = false;
+                    clearTimeout(timeout);
+                }, 160);
+            }
+        },
+        computeView(curOrder) {
+            // 计算显示题目
+            // 判断当前题号
+            curOrder = curOrder || 1;
+            curOrder = curOrder > this.paper.length ? 1 : curOrder;
+            // length 题目总数  prevOrder 上一题号  nextOrder 下一题号
+            let length = this.paper.length, prevOrder = curOrder - 1, nextOrder = curOrder + 1;
+            // 判断上一题号与下一题号
+            prevOrder = prevOrder < 1 ? length : prevOrder;
+            nextOrder = nextOrder > length ? 1 : nextOrder;
+            // 上一组题题号数组
+            // let prevOrders = [...this.view.map(item => item.order)];
+            let prevOrders = this.view.map(item => item.order);
+            // 下一组题题号数组
+            let nextOrders = [prevOrder, curOrder, nextOrder];
+            // 将要获取的题号数组
+            let quest = difference(nextOrders, prevOrders);
+            // 被替换的题号数组
+            let surplus = difference(prevOrders, nextOrders), index = [];
+
+            // 保存当前题号到storage
+            localStorage.setItem('curOrder', curOrder);
+            // 收集要被替换的题号的数组索引
+            surplus.forEach(i => index.push(prevOrders.indexOf(i)));
+            // 获取将要获取的题号数组内的题目数据添加到视图数据中
+            quest.forEach((order, qat) => {
+                let idx = index.length ? index[qat] : qat;
+                idx = idx > this.view.length ? 0 : idx;
+                this.view[idx] = this.paper.find(sub => sub.order === order);
+            });
+            // 获取当前题目的索引
+            let curIndex = this.view.findIndex(i => i.order === curOrder);
+            // 获取当前题目数据
+            let curSubject = this.view.find(item => item.order === curOrder);
+            // 获取当前题目的part信息
+            let part = this.parts.find(item => item.part.id === curSubject.part).part;
+            // 设置当前题
+            this.setCurrent(curSubject, part, curIndex);
+            // 返回相关数据
+            return {curOrder, curIndex, prevOrder, nextOrder, prevOrders, nextOrders, quest, surplus, index};
+        },
+        setCurrent(curSubject, part, curIndex) {
+            // 获取上一题音频材料地址
+            // 获取当前题材料信息
+            let {order, hasStuffText, hasStuffAudio, hasStuffImg, stuff} = curSubject, hasStuff = hasStuffText || hasStuffAudio || hasStuffImg;
+            let isPlaying = this.isPlaying;
+            // 判断：当前题目音频材料并设置状态
+            if (!hasStuffAudio || hasStuffAudio && (!this.audioSrc || this.audioSrc !== stuff.audio[0])) {
+                isPlaying = 0;
+                this.audioPause();
+                this.audioSrc = stuff.audio[0];
+            }
+            this.part = part;
+            this.order = order;
+            this.curIndex = curIndex;
+            this.stuff = stuff;
+            this.hasStuff = hasStuff;
+            this.hasStuffText = hasStuffText;
+            this.hasStuffAudio = hasStuffAudio;
+            this.hasStuffImg = hasStuffImg;
+            this.isRead = 0;
+            this.autoplay = false;
+            this.isPlaying = isPlaying;
+
+            outs = setTimeout(() => {
+                // wx.hideLoading();
+                clearTimeout(outs);
+                this.keep = false
+            }, 500);
+        },
+        changeSubject(e) {
+            // 滑动swiper获取题目
+            // 获取当前swiper-item对应的题号
+            let curIndex = e.detail.current, {order} = this.view[curIndex];
+            this.keep = true;
+            // 通过当前的题号设置当前视图数据
+            this.computeView(order);
+        },
+        setSubject(e) {
+            // 从答题卡获取题目
+            // 获取点击元素的题号
+            this.autoplay = false;
+            this.keep = true;
+            let curOrder = Number(e.currentTarget.dataset.order);
+            // 通过当前的题号设置当前视图数据
+            this.computeView(curOrder);
+            // 从答题卡选择题目后，隐藏答题卡
+            this.viewCard = false;
+        },
+        choose(e) {
+            // 选择题答案
+            // 清除timeout
+            this.keep = true;
+            clearTimeout(timeout);
+            // 获取当前题号及答案
+            let {order, value} = e.currentTarget.dataset;
+
+            if (order === 1 && !this.hasAnswer) {
+                // 如果当前题号为1，并且被标记过已开始答题
+                localStorage.setItem('hasAnswer', 1);
+                this.hasAnswer = 1;
+            }
+            // 设置当前选择获得的formId
+            this.params.formId = e.detail.formId || '';
+            // 保存对应题号答案
+            this.setValue(order, value, () => {
+                this.nextView(order, value);
+            });
+        },
+        fillView(e) {
+            // 填空题答案
+            let order = e.currentTarget.dataset.order, value = e.detail.value;
+            // 清除填空题答案空格，置换中文分隔符
+            value = value.replace(/ /g, '');
+            value = value.replace(/，/g, ',');
+            if (!value) return false;
+            this.setValue(order, value, () => {
+                this.nextView(order, value);
+            });
+        },
+        postAnswer(formId) {
+            // 提交试卷
+/*
+            wx.showLoading({
+                title: '正在提交...',
+                mask: true
+            });
+*/
+            let answer = [];
+            // 提取题号及对应答案
+            this.parts.forEach(item => answer.push(...cloneDeep(item.subjects)));
+            // 获取提交时间
+            let {type, remaining} = getStorage(), total = type ? 90 : 60;
+            let done_time = total - (remaining || total - 1);
+            if (done_time <= 0) {
+                done_time = 1;
+            }
+            let startTime = localStorage.getItem('startTime');
+            console.warn('开始答题时间', new Date(startTime));
+            console.warn('提交答案-剩余时间', remaining);
+            console.warn('提交答案-持续时间', done_time);
+            let param = Object.assign({}, cloneDeep(this.params), {answer, done_time, formId});
+            postJson('binexam/answer', param, ({result, errormsg}) => {
+                // wx.hideLoading();
+                if (result === -1) throw errormsg;
+                // 提交成功转至报告流程
+                // wx.redirectTo({url: '/pages/report/index'});
+                this.$router.push({
+                    path: '/report'
+                });
+            });
+        },
+        sendCard(e) {
+            // 交卷动作
+            let that = this, hasEmpty = 0;
+            this.paper.forEach(i => hasEmpty += i.reply !== '' ? 0 : 1);
+            // 提示：如果有未答题目提示未作答，否则提示交卷后不可修改
+/*
+            wx.showModal({
+                title: '确认交卷',
+                content: hasEmpty > 0 ? '本试题还有题目未作答' : '交卷后不可修改答案',
+                showCancel: true,
+                confirmText: '交卷',
+                success({confirm}) {
+                    // 确认交卷提交
+                    if (confirm) that.postAnswer(e.detail.formId);
+                },
+                fail(e) {
+                    console.log('quizzes, 290', e);
+                }
+            });
+*/
+        },
+        timeUpdate(e) {
+            this.audioCurTime = e.detail.currentTime;
+        },
+        play() {
+            this.isLoading = 0;
+        },
+        audioPlay() {
+            // 获取最新材料信息(包含当前音频材料seek)
+            let stuff = this.paper.find(i => i.order === this.order).stuff;
+            // 设置：当前音频路径
+            this.audioCtx.setSrc(stuff.audio[0]);
+            // 判断：如果当前音频播放记录存在则跳至记录位置
+            if (stuff.audioCurTime) {
+                this.audioCtx.seek(stuff.audioCurTime);
+            }
+            // 设置：播放状态
+            // this.setData({isPlaying: 1, isLoading: 1});
+            this.isPlaying = 1;
+            this.isLoading = 1;
+            // 开始播放
+            this.audioCtx.play();
+        },
+        audioPause(p) {
+            if (!this.audioCtx) return false;
+            this.audioSeek();
+            this.audioCtx.pause();
+            // this.setData({isPlaying: p || 0, isLoading: 0});
+            this.isPlaying = p || 0;
+            this.isLoading = 0;
+        },
+        audioEnd() {
+            this.audioSeek();
+            this.audioCurTime = 0;
+            // this.setData({isPlaying: 0});
+            this.isPlaying = 0;
+        },
+        autoToggle() {
+            if (this.isPlaying) {
+                this.audioPause();
+            } else {
+                this.audioPlay();
+            }
+        },
+        audioSeek() {
+            this.paper.forEach(i => {
+                if (i.stuff.audio[0] && this.audioSrc && i.stuff.audio[0] === this.stuff.audio[0]) {
+                    i.stuff.audioCurTime = this.audioCurTime;
+                }
+                return i;
+            });
+        },
+        viewCard() {
+            // 显示答题卡
+            // this.setData({viewCard: true, autoplay: false, keep: false});
+            this.viewCard = true;
+            this.autoplay = false;
+            this.keep = false;
+        },
+        hideCard(b) {
+            // 隐藏答题卡
+            if (!b) return false;
+            // this.setData({viewCard: false});
+            this.viewCard = false
+        },
+        viewRead() {
+            // 阅读模式
+            // this.setData({isRead: !this.isRead});
+            this.isRead = !this.isRead;
+        },
+        init() {
+
+            let {type, remaining} = this.getStorage();
+            // 防止：数据加载完毕前，点击首页按钮跳页错误
+            /*
+                        wx.showLoading({
+                            title: '请稍后...',
+                            mask: true
+                        });
+            */
+            // 重置已有栈数据
+            this.parts = [];
+            this.paper = [];
+            this.view = [];
+
+            // 解构请求所得数据
+            // let { paper_type, answer_status, is_answer, show_status, parts, qsAll } = data.data;
+            let paperType = 0;
+            // 设置：请求参数 paper_type
+            this.params.paper_type = paperType;
+            this.parts = parts;
+            // 设置材料状态
+            this.paper = qsAll.map(item => {
+                item.hasStuffText = !isEmpty(item.stuff.text);
+                item.hasStuffAudio = !isEmpty(item.stuff.audio);
+                item.hasStuffImg = !isEmpty(item.stuff.images);
+                return item;
+            });
+            // 合并题目数据与试卷数据
+            this.parts.forEach(item => {
+                item.subjects.forEach(subject => {
+                    Object.assign(this.paper.find(sub => sub.order === subject.order), subject);
+                });
+            });
+            // 存入本地缓存
+            // 如版本有改变，重置题号及时间
+            if (remaining === 'undefined') {
+                remaining = 60;
+            }
+            if (type !== paperType) {
+                localStorage.setItem('curOrder', 1);
+                if (paperType === 1) {
+                    remaining = 90;
+                }
+            }
+            localStorage.setItem('remaining', remaining);
+            // 试卷类型
+            localStorage.setItem('type', paperType);
+            // 答题状态
+            localStorage.setItem('hasAnswer', is_answer);
+            // 交卷状态
+            localStorage.setItem('isAssignment', answer_status);
+            // 报告状态
+            localStorage.setItem('hasReport', show_status);
+            // wx.hideLoading();
+            typeof cb === 'function' && cb(data);
+        }
+    },
     created() {
         // let currentOrder = localStorage.getItem('currentOrder') || 1;
         // this.computeView(currentOrder);
-        this.initQuizzes();
+        this.init();
     }
 }
 </script>
