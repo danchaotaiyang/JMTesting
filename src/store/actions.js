@@ -4,4 +4,5 @@ export const initData = ({commit, state}) => {
     commit(types.SET_PARTS, []);
     commit(types.SET_PAPER, []);
     commit(types.SET_VIEWS, []);
+    commit(types.SET_CURRENT_INDEX, localStorage.getItem('currentIndex') || 1);
 };
