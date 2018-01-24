@@ -4,7 +4,6 @@ const state = {
     code: null,
     token: null,
     userInfo: null,
-    params: postMode.params,
     paperType: 0,
     parts: [],
     paper: [],

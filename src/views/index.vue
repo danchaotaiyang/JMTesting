@@ -7,6 +7,7 @@
 <script>
 import {mapMutations, mapActions} from 'vuex';
 import {isEmpty, getStorage, setStorage} from '@/assets/js/util';
+import {postMode} from '@/assets/js/config';
 
 const data = {
     data: {
