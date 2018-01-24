@@ -1,32 +1,34 @@
+import * as types from 'mutation-types';
+
 const mutations = {
-    SET_PAPER_TYPE(state, paperType) {
+    [types.SET_PAPER_TYPE](state, paperType) {
         state.paperType = paperType;
     },
-    SET_PARTS(state, parts) {
+    [types.SET_PARTS](state, parts) {
         state.parts = parts;
     },
-    SET_PAPER(state, paper) {
+    [types.SET_PAPER](state, paper) {
         state.paper = paper;
     },
-    SET_PART(state, part) {
-        state.part = part;
-    },
-    SET_VIEWS(state, views) {
+    [types.SET_VIEWS](state, views) {
         state.views = views;
     },
-    SET_CURRENT_INDEX(state, currentIndex) {
+    [types.SET_PART](state, part) {
+        state.part = part;
+    },
+    [types.SET_CURRENT_INDEX](state, currentIndex) {
         state.currentIndex = currentIndex;
     },
-    SET_STATUS_HAS_ANSWER(state, hasAnswer) {
+    [types.SET_STATUS_HAS_ANSWER](state, hasAnswer) {
         state.hasAnswer = hasAnswer;
     },
-    SET_STATUS_HAS_REPORT(state, hasReport) {
+    [types.SET_STATUS_HAS_REPORT](state, hasReport) {
         state.hasReport = hasReport;
     },
-    SET_STATUS_STARTED(state, isStarted) {
+    [types.SET_STATUS_STARTED](state, isStarted) {
         state.isStarted = isStarted;
     },
-    SET_STATUS_ASSIGNMENT(state, isAssignment) {
+    [types.SET_STATUS_ASSIGNMENT](state, isAssignment) {
         state.isAssignment = isAssignment;
     }
 };
