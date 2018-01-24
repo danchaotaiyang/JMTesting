@@ -6,7 +6,7 @@
 
 <script>
 import {mapMutations, mapActions} from 'vuex';
-import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/util';
+import {isEmpty, getStorage, setStorage} from '@/assets/js/util';
 
 const data = {
     data: {
@@ -127,7 +127,7 @@ export default {
         ...mapActions([
             'initData'
         ]),
-        initQuizzes() {
+        init() {
             let {paperType, remaining} = getStorage();
             // 防止：数据加载完毕前，点击首页按钮跳页错误
             /*
@@ -142,9 +142,9 @@ export default {
             let { paper_type, answer_status, is_answer, show_status, parts, qsAll } = data.data;
 
             let paper = qsAll.map(item => {
-                item.hasStuffText = !isEmpty(item.stuff.text);
-                item.hasStuffAudio = !isEmpty(item.stuff.audio);
-                item.hasStuffImg = !isEmpty(item.stuff.images);
+                item['hasStuffText'] = !isEmpty(item.stuff.text);
+                item['hasStuffAudio'] = !isEmpty(item.stuff.audio);
+                item['hasStuffImg'] = !isEmpty(item.stuff.images);
                 return item;
             });
             parts.forEach(item => {
@@ -185,9 +185,7 @@ export default {
         }
     },
     created() {
-        // let currentOrder = localStorage.getItem('currentOrder') || 1;
-        // this.computeView(currentOrder);
-        this.initQuizzes();
+        this.init();
     }
 }
 </script>

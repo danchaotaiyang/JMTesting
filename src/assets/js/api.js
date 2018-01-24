@@ -90,6 +90,7 @@ export const postJson = (url, data, cb) => {
             });
     });
 };
+
 const constructParam = (data, cb) => {
     getToken(token => {
         let G = cloneDeep(postMode.G);
