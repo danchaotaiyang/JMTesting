@@ -8,3 +8,4 @@ export const hasAnswer = state => state.hasAnswer;
 export const hasReport = state => state.hasReport;
 export const isStarted = state => state.isStarted;
 export const isAssignment = state => state.isAssignment;
+export const isViewCard = state => state.isViewCard;

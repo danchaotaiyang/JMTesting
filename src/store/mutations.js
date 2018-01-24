@@ -1,4 +1,4 @@
-import * as types from 'mutation-types';
+import * as types from './mutation-types';
 
 const mutations = {
     [types.SET_PAPER_TYPE](state, paperType) {
@@ -30,6 +30,9 @@ const mutations = {
     },
     [types.SET_STATUS_ASSIGNMENT](state, isAssignment) {
         state.isAssignment = isAssignment;
+    },
+    [types.SET_STATUS_VIEW_CARD](state, isViewCard) {
+        state.isViewCard = isViewCard;
     }
 };
 

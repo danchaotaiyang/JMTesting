@@ -6,10 +6,15 @@ const state = {
     userInfo: null,
     params: postMode.params,
     paperType: 0,
-    hasAnswer: 0,
-    isAssignment: 0,
-    curIndex: 1,
-    viewCard: false,
+    parts: [],
+    paper: [],
+    views: [],
+    part: {},
+    currentIndex: 1,
+    hasAnswer: false,
+    isAssignment: false,
+    isStarted: false,
+    isViewCard: false,
 };
 
 export default state;

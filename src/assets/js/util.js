@@ -3,10 +3,14 @@ export const cloneDeep = source => JSON.parse(JSON.stringify(source));
 export const isEmpty = source => source === '' || source === null || source === undefined || JSON.stringify(source) === '{}' || JSON.stringify(source) === '[]';
 
 export const getStorage = () => {
-    // 获取storage数据
-    let storage = {}, stores = ['userInfo', 'paperType', 'hasAnswer', 'lastAnswer', 'curOrder', 'remaining', 'isAssignment', 'hasReport'];
+    let storage = {}, stores = ['userInfo', 'paperType', 'hasAnswer', 'currentOrder', 'remaining', 'isAssignment', 'hasReport'];
     stores.forEach(store => storage[store] = localStorage.getItem(store));
-    storage.lastAnswer = storage.lastAnswer || 1;
-    storage.curOrder = storage.curOrder || 1;
+    storage.currentOrder = storage.currentOrder || 1;
     return storage;
+};
+
+export const setStorage = (storage) => {
+    Object.keys(storage).forEach(i => {
+        localStorage.setItem(i, storage[i]);
+    });
 };
