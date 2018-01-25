@@ -1,6 +1,6 @@
 <template>
-<div class="subjects" ref="subjects">
-    <div class="subjects-group" ref="subjectsGroup">
+<div class="views" ref="views">
+    <div class="views-group" ref="viewsGroup">
         <slot></slot>
     </div>
 </div>
@@ -19,9 +19,9 @@ export default {
     },
     methods: {
         _initWidth(isInit) {
-            this.children = this.$refs.subjectsGroup.children;
+            this.children = this.$refs.viewsGroup.children;
             let width = 0;
-            let subjectWidth = this.$refs.subjects.clientWidth;
+            let subjectWidth = this.$refs.views.clientWidth;
             for (let i = 0; i < this.children.length; i++) {
                 let child = this.children[i];
                 addClass(child, 'subject');
@@ -31,10 +31,10 @@ export default {
             if (this.loop && isInit) {
                 width += 2 * subjectWidth;
             }
-            this.$refs.subjectsGroup.style.width = width + 'px';
+            this.$refs.viewsGroup.style.width = width + 'px';
         },
         _initSubject() {
-            this.subjects = new BScroll(this.$refs.subjects, {
+            this.views = new BScroll(this.$refs.views, {
                 scrollX: true,
                 scrollY: false,
                 momentum: false,
@@ -45,16 +45,27 @@ export default {
                     speed: 300
                 }
             });
-            this.subjects.on('scrollEnd', () => {
-                this.$emit('change', this.subjects.getCurrentPage().pageX);
+            this.views.goToPage(1, 0, 0);
+            this.views.on('scrollStart', () => {
+                this.update();
             });
-            this.subjects.goToPage(1, 0, 0);
+            this.views.on('scrollEnd', () => {
+                this.$emit('change', this.views.getCurrentPage().pageX);
+            });
         },
         next() {
-            this.subjects && this.subjects.next(300, {});
+            this.update();
+            this.timeout = setTimeout(() => {
+                this.views && this.views.next(300, {});
+                clearTimeout(this.timeout);
+            }, 500);
         },
         refresh() {
-            this.subjects && this.subjects.refresh();
+            this.views && this.views.refresh();
+        },
+        update() {
+            this.children[0].innerHTML = this.children[3].innerHTML;
+            this.children[4].innerHTML = this.children[1].innerHTML;
         }
     },
     created() {
@@ -65,7 +76,7 @@ export default {
             this._initSubject();
         }, 20);
         window.addEventListener('resize', () => {
-            if (!this.subjects) return;
+            if (!this.views) return;
             this._initWidth();
             this.refresh();
         });
@@ -74,12 +85,12 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.subjects {
+.views {
     position: relative;
     width: 100%;
     height: 100%;
     overflow: hidden;
-    .subjects-group {
+    .views-group {
         height: 100%;
     }
 }
