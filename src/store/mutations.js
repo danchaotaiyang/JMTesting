@@ -1,7 +1,7 @@
 import * as types from './mutation-types';
 
 const mutations = {
-    [types.SET_PAPER_TYPE](state, paperType) {
+    [types.SET_TYPE](state, paperType) {
         state.paperType = paperType;
     },
     [types.SET_PARTS](state, parts) {
@@ -9,15 +9,22 @@ const mutations = {
     },
     [types.SET_PAPER](state, paper) {
         state.paper = paper;
-    },
-    [types.SET_VIEWS](state, views) {
-        state.views = views;
+        state.length = paper.length;
     },
     [types.SET_PART](state, part) {
         state.part = part;
     },
+    [types.SET_VIEW](state, view) {
+        state.view = view;
+    },
+    [types.SET_CURRENT_ORDER](state, currentOrder) {
+        state.currentOrder = currentOrder;
+    },
     [types.SET_CURRENT_INDEX](state, currentIndex) {
         state.currentIndex = currentIndex;
+    },
+    [types.SET_REMAINING](state, remaining) {
+        state.remaining = remaining;
     },
     [types.SET_STATUS_HAS_ANSWER](state, hasAnswer) {
         state.hasAnswer = hasAnswer;

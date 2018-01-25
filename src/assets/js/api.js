@@ -7,40 +7,6 @@ let isDeAuth = false;
 
 export const apiUrlWx = (url, type) => `https://${type && type === 'img' ? 'static' : 'www'}.jiemo${isTest ? 'dou' : ''}.net/Wxapi/${url || ''}`;
 
-const getCode = (cb) => {
-    let code = null;
-    wx.login({
-        success(res) {
-            code = res.code;
-            typeof cb === 'function' && cb({code});
-        }
-    });
-};
-
-const getToken = (cb) => {
-    let token = null;
-    if (!isEmpty(postMode.token)) {
-        typeof cb === 'function' && cb({token: postMode.token})
-    } else {
-        token = localStorage.getItem('token');
-        if (isEmpty(token)) {
-            getCode(cb);
-        } else {
-            typeof cb === 'function' && cb({token});
-        }
-    }
-};
-
-const getUserInfo = (cb) => {
-    getCode(code => {
-        wx.getUserInfo({
-            success(res) {
-                typeof cb === 'function' && cb(Object.assign(res, code));
-            }
-        });
-    });
-};
-
 export const postJson = (url, data, cb) => {
     constructParam(data, theData => {
         /*
@@ -92,17 +58,14 @@ export const postJson = (url, data, cb) => {
 };
 
 const constructParam = (data, cb) => {
-    getToken(token => {
-        let G = cloneDeep(postMode.G);
-        Object.assign(G, token);
-        if (isDeAuth) {
-            G.nocheck = 1;
-        }
-        Object.assign(data, {G});
-        // console.log('请求参数');
-        // console.table(data.G,);
-        return typeof cb === 'function' && cb(data);
-    });
+    let G = cloneDeep(postMode.G);
+    if (isDeAuth) {
+        G.nocheck = 1;
+    }
+    Object.assign(data, {G});
+    // console.log('请求参数');
+    // console.table(data.G,);
+    return typeof cb === 'function' && cb(data);
 };
 
 

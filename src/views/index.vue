@@ -106,18 +106,14 @@ const data = {
 
 export default {
     data() {
-        return {
-            params: {
-                paper_type: 0
-            }
-        }
+        return {};
     },
     methods: {
         ...mapMutations({
-            setPaperType: 'SET_PAPER_TYPE',
+            setType: 'SET_TYPE',
             setParts: 'SET_PARTS',
             setPaper: 'SET_PAPER',
-            setViews: 'SET_VIEWS',
+            setLength: 'SET_LENGTH',
             setPart: 'SET_PART',
             setCurrentIndex: 'SET_CURRENT_INDEX',
             setHasAnswer: 'SET_STATUS_HAS_ANSWER',
@@ -127,66 +123,7 @@ export default {
         }),
         ...mapActions([
             'initData'
-        ]),
-        init() {
-            let {paperType, remaining} = getStorage();
-            // 防止：数据加载完毕前，点击首页按钮跳页错误
-            /*
-                        wx.showLoading({
-                            title: '请稍后...',
-                            mask: true
-                        });
-            */
-            // 重置已有栈数据
-            this.initData();
-            // 解构请求所得数据
-            let { paper_type, answer_status, is_answer, show_status, parts, qsAll } = data.data;
-
-            let paper = qsAll.map(item => {
-                item['hasStuffText'] = !isEmpty(item.stuff.text);
-                item['hasStuffAudio'] = !isEmpty(item.stuff.audio);
-                item['hasStuffImg'] = !isEmpty(item.stuff.images);
-                return item;
-            });
-            parts.forEach(item => {
-                item.subjects.forEach(subject => {
-                    Object.assign(paper.find(sub => sub.order === subject.order), subject);
-                });
-            });
-            // 设置：请求参数 paper_type
-            this.params.paper_type = paper_type;
-            // 设置材料状态
-            this.setParts(parts);
-            this.setPaper(paper);
-            // 合并题目数据与试卷数据
-
-            // 存入本地缓存
-            // 如版本有改变，重置题号及时间
-            if (remaining !== 0 && !remaining) {
-                remaining = 60;
-            }
-            if (paperType !== paper_type) {
-                setStorage({currentOrder: 1});
-                this.setCurrentIndex(1);
-                if (paper_type === 1) {
-                    remaining = 90;
-                }
-            }
-            setStorage({
-                remaining,
-                // 答题状态
-                hasAnswer: is_answer,
-                // 交卷状态
-                isAssignment: answer_status,
-                // 报告状态
-                hasReport: show_status
-            });
-            // wx.hideLoading();
-            typeof cb === 'function' && cb(data);
-        }
-    },
-    created() {
-        this.init();
+        ])
     }
 }
 </script>

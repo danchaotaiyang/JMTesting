@@ -1,9 +1,11 @@
-export const SET_PAPER_TYPE = 'SET_PAPER_TYPE';
+export const SET_TYPE = 'SET_TYPE';
 export const SET_PARTS = 'SET_PARTS';
 export const SET_PAPER = 'SET_PAPER';
 export const SET_PART = 'SET_PART';
-export const SET_VIEWS = 'SET_VIEWS';
+export const SET_VIEW = 'SET_VIEW';
+export const SET_CURRENT_ORDER = 'SET_CURRENT_ORDER';
 export const SET_CURRENT_INDEX = 'SET_CURRENT_INDEX';
+export const SET_REMAINING = 'SET_REMAINING';
 export const SET_STATUS_HAS_ANSWER = 'SET_STATUS_HAS_ANSWER';
 export const SET_STATUS_HAS_REPORT = 'SET_STATUS_HAS_REPORT';
 export const SET_STATUS_STARTED = 'SET_STATUS_STARTED';
