@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import {mapMutations} from 'vuex';
 import {addClass} from '@/assets/js/dom';
 import BScroll from 'better-scroll';
 
@@ -18,6 +19,9 @@ export default {
         }
     },
     methods: {
+        ...mapMutations({
+            setCurrentIndex: 'SET_CURRENT_INDEX',
+        }),
         _initWidth(isInit) {
             this.children = this.$refs.viewsGroup.children;
             let width = 0;
@@ -50,6 +54,7 @@ export default {
                 this.update();
             });
             this.views.on('scrollEnd', () => {
+                this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
             });
         },

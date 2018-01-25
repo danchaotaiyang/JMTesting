@@ -45,7 +45,6 @@ export default {
             setPart: 'SET_PART',
             setView: 'SET_VIEW',
             setCurrentOrder: 'SET_CURRENT_ORDER',
-            setCurrentIndex: 'SET_CURRENT_INDEX',
             setHasAnswer: 'SET_STATUS_HAS_ANSWER',
             setAssignment: 'SET_STATUS_ASSIGNMENT',
             setHasReport: 'SET_STATUS_HAS_REPORT'
@@ -127,9 +126,7 @@ export default {
             }, 500);
         },
         changeViews(index) {
-            let {order} = this.views[index];
-            this.setCurrentOrder(index);
-            this.computeView(order);
+            this.computeView(this.views[index].order);
         },
         saveReply(order, reply) {
             this.views.find(i => i.order === order).reply = reply;
