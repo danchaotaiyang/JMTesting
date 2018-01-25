@@ -128,14 +128,11 @@ export default {
         },
         changeViews(index) {
             let {order} = this.views[index];
+            this.setCurrentOrder(index);
             this.computeView(order);
         },
         saveReply(order, reply) {
-            console.log(order, reply);
-            let index = this.views.findIndex(i => i.order === order);
-            let subject = this.views.find(i => i.order === order);
-            subject.reply = reply;
-            this.$set(this.views, index, subject);
+            this.views.find(i => i.order === order).reply = reply;
             this.$refs.subjects.next();
         }
     },
