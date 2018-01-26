@@ -1,6 +1,6 @@
 <template>
-<div class="paper" v-show="isPaper">
-    <transition name="paper">
+<transition name="view-paper">
+    <div class="paper" v-show="isPaper">
         <div class="paperHead">
             <div class="title"></div>
             <div class="remaining"></div>
@@ -15,8 +15,8 @@
                 </div>
             </div>
         </scroll>
-    </transition>
-</div>
+    </div>
+</transition>
 </template>
 
 <script>
@@ -43,10 +43,12 @@ export default {
 @import '../assets/sass/util/variables';
 @import '../assets/sass/util/mixins';
 
-&.paper-enter-active, &.paper-leave-active {
-    @include transition(all 0.4s);
-}
-&.paper-enter, &.paper-leave-to {
-    opacity: 0;
+.paper {
+    &.paper-enter-active, &.paper-leave-active {
+        @include transition(all 0.4s);
+    }
+    &.paper-enter, &.paper-leave-to {
+        opacity: 0;
+    }
 }
 </style>

@@ -1,9 +1,9 @@
 <template>
-<div>
+<div class="detail">
     {{detail.order || ''}}
     <div class="stuff" v-if="detail.hasStuff">有材料</div>
     <div class="options">
-        <div v-for="option in detail.options" @touchend="chooseReply(detail.order, option.op_key)" :class="{'active': option.op_key === detail.reply}">
+        <div v-for="option in detail.options" @click="chooseReply(detail.order, option.op_key)" :class="{'active': option.op_key === detail.reply}">
             <span>{{option.op_content}}</span>
         </div>
     </div>
@@ -27,12 +27,10 @@ export default {
         ...mapMutations({
             setPaper: 'SET_PAPER',
             setView: 'SET_VIEW',
-            setKeep: 'SET_STATUS_KEEP'
+            setChoose: 'SET_STATUS_CHOOSE'
         }),
         chooseReply(order, reply) {
-            if (!this.choose) {
-                return false;
-            }
+            this.setChoose(false);
             let paper = this.paper;
             let views = this.view;
             let subject = cloneDeep(paper.find(i => i.order === order));

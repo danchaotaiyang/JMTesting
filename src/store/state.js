@@ -14,9 +14,8 @@ const state = {
     currentIndex: 1,
     hasAnswer: false,
     isAssignment: false,
-    isStarted: false,
     isPaper: false,
-    choose: true
+    choose: false
 };
 
 export default state;

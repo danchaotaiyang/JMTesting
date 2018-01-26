@@ -57,11 +57,9 @@ export default {
             this.views.goToPage(1, 0, 0);
 
             this.views.on('scrollStart', () => {
-                this.setChoose(false);
                 this.updateViews();
             });
             this.views.on('scrollEnd', () => {
-                this.setChoose(true);
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
             });

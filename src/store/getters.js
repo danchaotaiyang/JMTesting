@@ -12,4 +12,3 @@ export const hasReport = state => state.hasReport;
 export const isAssignment = state => state.isAssignment;
 export const isPaper = state => state.isPaper;
 export const choose = state => state.choose;
-export const isKeep = state => state.isKeep;

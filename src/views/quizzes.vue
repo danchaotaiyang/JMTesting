@@ -2,41 +2,37 @@
 <transition name="quizzes">
     <div class="quizzes">
         <div class="introduce">
-            <div class="title">{{part && part.name || '加载中...'}}</div>
+            <div class="title">{{part.name || '加载中...'}}</div>
             <div class="period icn-calendar">有效期5天</div>
             <div class="timing icn-clock" v-if="!isAssignment">{{remaining || '--'}}</div>
             <!--<div class="cardView icn-list" @click="viewCard">答题卡</div>-->
             <div class="cardView icn-list" @click="viewPaper">答题卡</div>
         </div>
-        <views class="view" ref="subjects" @change="changeViews">
+        <views class="view" ref="view" @change="changeViews">
             <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
         </views>
+        <div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>
     </div>
-    <view-paper></view-paper>
 </transition>
 </template>
 
 <script>
-import {mapGetters, mapMutations, mapActions} from 'vuex';
+import {mapGetters, mapMutations} from 'vuex';
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
+
 import Views from '@/components/views';
 import ViewDetail from '@/components/view-detail';
-import ViewPaper from '@/components/view-paper';
-
-
-let outs;
 
 export default {
     data() {
         return {
             beginAnswer: false,
-            keep: false,
-            part: {}
+            keep: false
         };
     },
-    components: {Views, ViewDetail, ViewPaper},
+    components: {Views, ViewDetail},
     computed: {
-        ...mapGetters(['type', 'parts', 'paper', 'length', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'isViewCard'])
+        ...mapGetters(['type', 'parts', 'paper', 'length', 'part', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'choose'])
     },
     methods: {
         ...mapMutations({
@@ -50,7 +46,7 @@ export default {
             setAssignment: 'SET_STATUS_ASSIGNMENT',
             setHasReport: 'SET_STATUS_HAS_REPORT',
             setViewPaper: 'SET_STATUS_PAPER',
-            setKeep: 'SET_STATUS_KEEP'
+            setChoose: 'SET_STATUS_CHOOSE'
         }),
         viewPaper() {
             this.setViewPaper(true);
@@ -75,7 +71,6 @@ export default {
             let part = this.parts.find(item => item.part.id === curSubject.part).part;
             if (part.id !== this.part.id) {
                 this.setPart(part);
-                this.part = part;
             }
             // prevOrder 上一题号  nextOrder 下一题号
             let prevOrder = curOrder - 1, nextOrder = curOrder + 1;
@@ -109,10 +104,8 @@ export default {
             // 获取上一题音频材料地址
             // 获取当前题材料信息
             let {hasStuffText, hasStuffAudio, hasStuffImg, stuff} = curSubject, hasStuff = hasStuffText || hasStuffAudio || hasStuffImg;
-            let isPlaying = this.isPlaying;
             // 判断：当前题目音频材料并设置状态
             if (!hasStuffAudio || hasStuffAudio && (!this.audioSrc || this.audioSrc !== stuff.audio[0])) {
-                isPlaying = 0;
                 // this.audioPause();
                 this.audioSrc = stuff.audio[0];
             }
@@ -123,14 +116,10 @@ export default {
             this.hasStuffText = hasStuffText;
             this.hasStuffAudio = hasStuffAudio;
             this.hasStuffImg = hasStuffImg;
-            this.isRead = false;
-            this.isPlaying = isPlaying;
-            outs = setTimeout(() => {
-                // wx.hideLoading();
-                clearTimeout(outs);
-                this.keep = false;
-                this.setKeep(true);
-            }, 500);
+            this.outs = setTimeout(() => {
+                this.setChoose(true);
+                clearTimeout(this.outs);
+            }, 80);
         },
         changeViews(index) {
             this.computeView(this.view[index].order);
@@ -139,7 +128,10 @@ export default {
             let views = cloneDeep(this.view);
             views.find(i => i.order === order).reply = reply;
             this.setView(views);
-            this.$refs.subjects.nextView();
+            this.$refs.view.nextView();
+        },
+        touchMove() {
+            return false;
         }
     },
     created() {
@@ -163,6 +155,16 @@ export default {
         width: 100%;
         background-color: #ccc;
     }
+    .viewLock {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 10000;
+        background-color: rgba(255, 255, 255, .5);
+    }
+
 }
 
 .quizzes-enter-active,

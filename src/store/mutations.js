@@ -43,9 +43,6 @@ const mutations = {
     },
     [types.SET_STATUS_CHOOSE](state, choose) {
         state.choose = choose;
-    },
-    [types.SET_STATUS_KEEP](state, isKeep) {
-        state.isKeep = isKeep;
     }
 };
 

@@ -1,6 +1,7 @@
 <template>
 <div id="app">
     <router-view/>
+    <view-paper></view-paper>
 </div>
 </template>
 
@@ -102,12 +103,15 @@ const data = {
     }
 };
 
+
 import {mapGetters, mapMutations} from 'vuex';
+import ViewPaper from '@/components/view-paper';
 
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
 
 
 export default {
+    components: {ViewPaper},
     methods: {
         ...mapMutations({
             setType: 'SET_TYPE',
@@ -188,7 +192,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" rel="stylesheet/scss" scoped>
 #app {
     width: 100vw;
     height: 100vh;
