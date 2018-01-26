@@ -1,9 +1,9 @@
 <template>
 <div>
     {{detail.order || ''}}
-    <div class="stuff"></div>
+    <div class="stuff" v-if="detail.hasStuff">有材料</div>
     <div class="options">
-        <div v-for="option in detail.options" @touchend.stop="chooseReply(detail.order, option.op_key)" :class="{'active': option.op_key === detail.reply}">
+        <div v-for="option in detail.options" @touchend="chooseReply(detail.order, option.op_key)" :class="{'active': option.op_key === detail.reply}">
             <span>{{option.op_content}}</span>
         </div>
     </div>

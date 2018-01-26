@@ -61,9 +61,9 @@ export default {
                 this.updateViews();
             });
             this.views.on('scrollEnd', () => {
+                this.setChoose(true);
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
-                this.setChoose(true);
             });
         },
         nextView() {
