@@ -1,9 +1,9 @@
 <template>
 <transition name="quizzes">
     <div class="quizzes">
-        <div class="introduce">
-            <div class="title"><span>{{part.name || '加载中...'}}</span><div class="viewPaper" @click="showPaper"><i class="icon-list"><icon name="list-ul"></icon></i><span>答题卡</span></div></div>
-            <div class="period"><icon name="calendar-check-o"></icon>有效期5天 <icon name="clock-o"></icon>{{remaining || '--'}}</div>
+        <div class="head">
+            <div class="introduce"><div class="title"><strong>{{partName[0]}}：</strong><span>{{partName[1]}}</span></div><div class="viewPaper" @click="showPaper"><icon name="dot-circle-o"></icon></div></div>
+            <!--<div class="hourglass"><icon name="clock-o"></icon>{{remaining || '&#45;&#45;'}}</div>-->
         </div>
         <views ref="view" @change="changeViews">
             <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
@@ -22,9 +22,10 @@ import ViewPaper from '@/components/view-paper';
 import Icon from 'vue-awesome/components/Icon';
 import {mapGetters, mapMutations} from 'vuex';
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
-import 'vue-awesome/icons/list-ul';
-import 'vue-awesome/icons/calendar-check-o';
 import 'vue-awesome/icons/clock-o';
+import 'vue-awesome/icons/dot-circle-o';
+import 'vue-awesome/icons/calendar-check-o';
+import 'vue-awesome/icons/hourglass-start';
 export default {
     data() {
         return {
@@ -34,7 +35,10 @@ export default {
     },
     components: {Views, ViewDetail, ViewPaper, Icon},
     computed: {
-        ...mapGetters(['type', 'parts', 'paper', 'length', 'part', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'choose'])
+        ...mapGetters(['type', 'parts', 'paper', 'length', 'part', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'choose']),
+        partName() {
+            return this.part.name.split('：');
+        }
     },
     methods: {
         ...mapMutations({
@@ -160,21 +164,56 @@ export default {
     height: 100%;
     background-color: #f7f8fc;
     overflow: hidden;
-    .introduce {
+    .head {
         position: relative;
         z-index: 5;
         width: 100vw;
         height: 10.7794vh;
-        padding: 4vw;
         background: #eee;
         overflow: hidden;
         @include box-sizing(border-box);
         @include box-shadow(0 0 10px rgba(175, 175, 175, .35));
-        .title {
-            float: left;
-            font-weight: bold;
-            font-size: 4.2667vw;
-            color: #131313;
+        .introduce {
+            display: -webkit-flex;
+            display: flex;
+            -webkit-justify-content: space-between;
+            justify-content: space-between;
+            -webkit-align-items: center;
+            align-items: center;
+            padding: 2vw 0;
+            .title {
+                -webkit-flex: 1;
+                flex: 1;
+                text-indent: .75em;
+                font-size: 4.2667vw;
+                color: #131313;
+            }
+            strong {
+                color: #999;
+            }
+            .viewPaper {
+
+                /*padding: 1.5vw 2vw;*/
+                /*padding: 1.5vw 1.75vw 1.5vw 7.5vw;*/
+                padding: 1.5vw 1.75vw 1.5vw 2.5vw;
+                background-color: #4c9cff;
+                /*border: 1px solid #4c9cff;*/
+                /*border-right: none;*/
+                font-weight: 300;
+                font-size: 4vw;
+                color: #fff;
+                @include background-size(auto 2.4vw);
+                @include border-radius(2em 0 0 2em);
+                svg {
+                    float: left;
+                    display: block;
+                    margin-right: 3px;
+                }
+                &:after {
+                    float: right;
+                    content: '答题卡';
+                }
+            }
         }
         .period,
         .timing {
@@ -191,34 +230,7 @@ export default {
         .timing {
             float: right;
         }
-        .viewPaper {
-            position: absolute;
-            top: 2.75vw;
-            right: 0;
-            float: right;
-            /*padding: 1.5vw 2vw;*/
-            padding: 1.5vw 1.75vw 1.5vw 7.5vw;
-            background-color: #4c9cff;
-            /*border: 1px solid #4c9cff;*/
-            /*border-right: none;*/
-            font-weight: 300;
-            font-size: 4vw;
-            color: #fff;
-            @include background-size(auto 2.4vw);
-            @include border-radius(2em 0 0 2em);
-            .icon-list {
-                position: absolute;
-                left: 2.5vw;
-                display: inline-block;
-                width: 1em;
-                height: 1em;
-                vertical-align: middle;
-                svg {
-                    width: 100%;
-                    height: 100%;
-                }
-            }
-        }
+
     }
     .viewLock {
         position: fixed;

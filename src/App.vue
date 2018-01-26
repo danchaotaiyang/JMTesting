@@ -23,7 +23,7 @@ const data = {
                 ]
             },
             {
-                part: {id: 4, name: 'PartⅡ: Speaking'},
+                part: {id: 4, name: 'PartⅡ：Speaking'},
                 subjects: [
                     {order: 51, reply: '', right: 'B'}, {order: 52, reply: '', right: 'D'}, {order: 53, reply: '', right: 'D'}, {order: 54, reply: '', right: 'D'}, {order: 55, reply: '', right: 'C'}, {order: 56, reply: '', right: 'D'}, {order: 57, reply: '', right: 'C'}, {order: 58, reply: '', right: 'B'}, {order: 59, reply: '', right: 'C'}, {order: 60, reply: '', right: 'D'},
                     {order: 61, reply: '', right: 'C'}, {order: 62, reply: '', right: 'B'}, {order: 63, reply: '', right: 'D'}, {order: 64, reply: '', right: 'C'}, {order: 65, reply: '', right: 'A'}, {order: 66, reply: '', right: 'D'}, {order: 67, reply: '', right: 'C'}, {order: 68, reply: '', right: 'D'}
