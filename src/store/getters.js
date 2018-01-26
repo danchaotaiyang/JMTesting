@@ -10,6 +10,6 @@ export const remaining = state => state.remaining || type ? 60 : 90;
 export const hasAnswer = state => state.hasAnswer;
 export const hasReport = state => state.hasReport;
 export const isAssignment = state => state.isAssignment;
-export const isViewCard = state => state.isViewCard;
+export const isPaper = state => state.isPaper;
 export const choose = state => state.choose;
 export const isKeep = state => state.isKeep;

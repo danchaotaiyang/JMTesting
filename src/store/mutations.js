@@ -38,8 +38,8 @@ const mutations = {
     [types.SET_STATUS_ASSIGNMENT](state, isAssignment) {
         state.isAssignment = isAssignment;
     },
-    [types.SET_STATUS_VIEW_CARD](state, isViewCard) {
-        state.isViewCard = isViewCard;
+    [types.SET_STATUS_PAPER](state, isPaper) {
+        state.isPaper = isPaper;
     },
     [types.SET_STATUS_CHOOSE](state, choose) {
         state.choose = choose;

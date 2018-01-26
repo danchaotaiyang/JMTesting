@@ -54,7 +54,6 @@ export default {
         z-index: 500;
         display: block;
         padding: 1em;
-
     }
 }
 .active {

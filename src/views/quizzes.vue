@@ -6,12 +6,13 @@
             <div class="period icn-calendar">有效期5天</div>
             <div class="timing icn-clock" v-if="!isAssignment">{{remaining || '--'}}</div>
             <!--<div class="cardView icn-list" @click="viewCard">答题卡</div>-->
-            <div class="cardView icn-list">答题卡</div>
+            <div class="cardView icn-list" @click="viewPaper">答题卡</div>
         </div>
         <views class="view" ref="subjects" @change="changeViews">
             <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
         </views>
     </div>
+    <view-paper></view-paper>
 </transition>
 </template>
 
@@ -20,6 +21,7 @@ import {mapGetters, mapMutations, mapActions} from 'vuex';
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
 import Views from '@/components/views';
 import ViewDetail from '@/components/view-detail';
+import ViewPaper from '@/components/view-paper';
 
 
 let outs;
@@ -32,7 +34,7 @@ export default {
             part: {}
         };
     },
-    components: {Views, ViewDetail},
+    components: {Views, ViewDetail, ViewPaper},
     computed: {
         ...mapGetters(['type', 'parts', 'paper', 'length', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'isViewCard'])
     },
@@ -47,8 +49,12 @@ export default {
             setHasAnswer: 'SET_STATUS_HAS_ANSWER',
             setAssignment: 'SET_STATUS_ASSIGNMENT',
             setHasReport: 'SET_STATUS_HAS_REPORT',
+            setViewPaper: 'SET_STATUS_PAPER',
             setKeep: 'SET_STATUS_KEEP'
         }),
+        viewPaper() {
+            this.setViewPaper(true);
+        },
         computeView(curOrder) {
             // 计算显示题目
             // 判断当前题号

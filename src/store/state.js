@@ -15,7 +15,7 @@ const state = {
     hasAnswer: false,
     isAssignment: false,
     isStarted: false,
-    isViewCard: false,
+    isPaper: false,
     choose: true
 };
 
