@@ -32,14 +32,11 @@ const mutations = {
     [types.SET_STATUS_HAS_REPORT](state, hasReport) {
         state.hasReport = hasReport;
     },
-    [types.SET_STATUS_STARTED](state, isStarted) {
-        state.isStarted = isStarted;
-    },
     [types.SET_STATUS_ASSIGNMENT](state, isAssignment) {
         state.isAssignment = isAssignment;
     },
-    [types.SET_STATUS_PAPER](state, isPaper) {
-        state.isPaper = isPaper;
+    [types.SET_STATUS_VIEW_PAPER](state, viewPaper) {
+        state.viewPaper = viewPaper;
     },
     [types.SET_STATUS_CHOOSE](state, choose) {
         state.choose = choose;

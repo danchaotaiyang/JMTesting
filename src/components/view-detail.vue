@@ -41,6 +41,11 @@ export default {
             views[viewsIndex] = subject;
             this.$emit('choose', order, reply);
         }
+    },
+    watch: {
+        detail(detail) {
+            console.log(detail);
+        }
     }
 }
 </script>

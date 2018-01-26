@@ -5,6 +5,7 @@ import store from './store';
 import Axios from 'axios';
 import fastclick from 'fastclick';
 
+
 Vue.prototype.$http = Axios;
 
 fastclick.attach(document.body);

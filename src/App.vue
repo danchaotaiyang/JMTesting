@@ -1,12 +1,10 @@
 <template>
 <div id="app">
     <router-view/>
-    <view-paper></view-paper>
 </div>
 </template>
 
 <script>
-
 const data = {
     data: {
         paper_type: 0,
@@ -103,15 +101,10 @@ const data = {
     }
 };
 
-
 import {mapGetters, mapMutations} from 'vuex';
-import ViewPaper from '@/components/view-paper';
-
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
 
-
 export default {
-    components: {ViewPaper},
     methods: {
         ...mapMutations({
             setType: 'SET_TYPE',
@@ -192,10 +185,22 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
+<style>
 #app {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+}
+
+.icn-list {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAAPBAMAAAAbqIIhAAAAFVBMVEUAAABMnP9MnP9MnP9MnP9MnP9MnP8SlhviAAAABnRSTlMAhfTD+cTUOs3HAAAAH0lEQVQI12MQEmAwSwOCZAY3BYY0MICLpTLgBbTTCwBx6BZXgBytyAAAAABJRU5ErkJggg==") no-repeat;
+}
+
+.icn-calendar {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAdBAMAAABPisE/AAAAKlBMVEUAAACvr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+XVkDqAAAADXRSTlMA4d3u9K2F8sMne8QlhNj2DQAAAHZJREFUGNNjAIKUBAYQYHNjgIC7DmCK9wqMfwHCvwsiecIv3L1wFwR47/KWHmCYfFnh7gUlEOC9y2RryRC7AEk911WGYhTzTBguotgnC+QjAJX4vXch4AYa//ZQML8YhW8CCk8E4LoKDG8lBACGN2f4XQQonQAAs1dbpWwBtQwAAAAASUVORK5CYII=") no-repeat;
+}
+
+.icn-clock {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAUVBMVEUAAACvr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+vr6+SFX1wAAAAGnRSTlMA+AfqJAzbM5zJwRZ1mVeJtzvRnSPQJT2KWWJgmY4AAAD/SURBVDjLhZPrloMgDIQTbgp4p7q78/4PuqctBcRy/P4po5MMCWX0NFrJLO04abqiekaCe1Udi5kBN6xeCL8ODuBZUMFjB4IqfheAvXjuJExHJzoD2SW9hPNU4R2kiv47FkEXxILt/XqGSW1ZW7RtML8KZGR/oKwD/DTpEagWRHr0RJqhWgIF1jTBUUtADhONGNqCASNZrG3BDyxJ+LbAQxJDnATmyd8nLHAlkHgxZEG0yNQWschMXWRsM1O3GYPK1EHFqDN11PFGvhKPVLrumg585IG5og1+32lszZHTaWgXffl+gVS3Y59QGxAexSIFYFO3q3fmOC/vQZHb9f8HQtwSR1ijMpAAAAAASUVORK5CYII=") no-repeat;
 }
 </style>

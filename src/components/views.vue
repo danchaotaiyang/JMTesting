@@ -7,9 +7,9 @@
 </template>
 
 <script>
+import BScroll from 'better-scroll';
 import {mapGetters, mapMutations} from 'vuex';
 import {addClass} from '@/assets/js/dom';
-import BScroll from 'better-scroll';
 
 export default {
     props: {
