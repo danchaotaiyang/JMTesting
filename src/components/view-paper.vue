@@ -1,12 +1,12 @@
 <template>
 <transition name="view-paper">
-    <div class="paper" v-show="viewPaper">
+    <div class="paper" v-if="viewPaper" @click.stop.prevent="hidePaper">
         <div class="paperHead">
             <div class="title">雅思能力测评</div>
             <div class="remaining"></div>
         </div>
-        <scroll class="scroll" ref="scroll">
-            <div class="paperBody">
+        <scroll class="paperBody" ref="scroll">
+            <div>
                 <div class="part" v-for="part in parts">
                     <div class="name">{{part.part.name}}</div>
                     <div class="subjects">
@@ -30,10 +30,13 @@ export default {
     },
     methods: {
         ...mapMutations({
-            setViewPaper: 'SET_STATUS_PAPER'
+            setViewPaper: 'SET_STATUS_VIEW_PAPER'
         }),
         getQuizzes(subject) {
 
+        },
+        hidePaper() {
+            this.setViewPaper(false);
         }
     }
 }
@@ -70,6 +73,7 @@ export default {
         }
     }
     .paperBody {
+        position: relative;
         height: 80vh;
         overflow: hidden;
         @include box-sizing(border-box);

@@ -2,11 +2,8 @@
 <transition name="quizzes">
     <div class="quizzes">
         <div class="introduce">
-            <div class="title">{{part.name || '加载中...'}}</div>
-            <div class="period icn-calendar">有效期5天</div>
-            <div class="timing icn-clock" v-if="!isAssignment">{{remaining || '--'}}</div>
-            <!--<div class="cardView icn-list" @click="viewCard">答题卡</div>-->
-            <div class="viewPaper" @click="viewPaper"><i  class="icon-list"><icon name="list-ul" scale="0.75"></icon></i><span>答题卡</span></div>
+            <div class="title"><span>{{part.name || '加载中...'}}</span><div class="viewPaper" @click="showPaper"><i class="icon-list"><icon name="list-ul"></icon></i><span>答题卡</span></div></div>
+            <div class="period"><icon name="calendar-check-o"></icon>有效期5天 <icon name="clock-o"></icon>{{remaining || '--'}}</div>
         </div>
         <views ref="view" @change="changeViews">
             <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
@@ -26,6 +23,8 @@ import Icon from 'vue-awesome/components/Icon';
 import {mapGetters, mapMutations} from 'vuex';
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
 import 'vue-awesome/icons/list-ul';
+import 'vue-awesome/icons/calendar-check-o';
+import 'vue-awesome/icons/clock-o';
 export default {
     data() {
         return {
@@ -51,7 +50,7 @@ export default {
             setViewPaper: 'SET_STATUS_VIEW_PAPER',
             setChoose: 'SET_STATUS_CHOOSE'
         }),
-        viewPaper() {
+        showPaper() {
             this.setViewPaper(true);
         },
         computeView(curOrder) {
@@ -166,7 +165,7 @@ export default {
         z-index: 5;
         width: 100vw;
         height: 10.7794vh;
-        padding: 1.333vw 4vw 0;
+        padding: 4vw;
         background: #eee;
         overflow: hidden;
         @include box-sizing(border-box);
@@ -194,24 +193,30 @@ export default {
         }
         .viewPaper {
             position: absolute;
-            top: 1.333vw;
-            right: 4vw;
+            top: 2.75vw;
+            right: 0;
             float: right;
-            background-position: 1.8667vw 50%;
-            /*padding: .55vw 1.333vw .55vw 5.6vw;*/
-            padding: .55vw 1.333vw;
-            border: 1px solid #4c9cff;
-            font-size: 3.4667vw;
-            color: #4c9cff;
+            /*padding: 1.5vw 2vw;*/
+            padding: 1.5vw 1.75vw 1.5vw 7.5vw;
+            background-color: #4c9cff;
+            /*border: 1px solid #4c9cff;*/
+            /*border-right: none;*/
+            font-weight: 300;
+            font-size: 4vw;
+            color: #fff;
             @include background-size(auto 2.4vw);
-            @include border-radius(2em);
+            @include border-radius(2em 0 0 2em);
             .icon-list {
-                position: relative;
-                top: 1px;
-/*
-                line-height: 3.4667vw;
+                position: absolute;
+                left: 2.5vw;
+                display: inline-block;
+                width: 1em;
+                height: 1em;
                 vertical-align: middle;
-*/
+                svg {
+                    width: 100%;
+                    height: 100%;
+                }
             }
         }
     }

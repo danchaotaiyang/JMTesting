@@ -33,7 +33,11 @@ export default {
             }
             this.scroll = new BScroll(this.$refs.wrapper, {
                 probeType: this.probeType,
-                click: this.click
+                click: this.click,
+                scrollbar: {
+                    fade: true,
+                    interactive: true // 1.8.0 新增
+                }
             });
             if (this.listenScroll) {
                 let me = this;
