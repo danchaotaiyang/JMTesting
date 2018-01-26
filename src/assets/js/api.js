@@ -1,6 +1,6 @@
 import Axios from 'axios';
 import {postMode} from './config';
-import {isEmpty, cloneDeep} from './util';
+import {isEmpty, cloneDeep} from './utils';
 
 let isTest = false;
 let isDeAuth = false;

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex';
+import {mapGetters, mapMutations} from 'vuex';
 import {addClass} from '@/assets/js/dom';
 import BScroll from 'better-scroll';
 
@@ -18,9 +18,13 @@ export default {
             default: true
         }
     },
+    computed: {
+        ...mapGetters(['choose'])
+    },
     methods: {
         ...mapMutations({
             setCurrentIndex: 'SET_CURRENT_INDEX',
+            setChoose: 'SET_STATUS_CHOOSE',
         }),
         _initWidth(isInit) {
             this.children = this.$refs.viewsGroup.children;
@@ -49,17 +53,21 @@ export default {
                     speed: 300
                 }
             });
+            // 默认选择当前为第一题
             this.views.goToPage(1, 0, 0);
+
             this.views.on('scrollStart', () => {
-                this.update();
+                this.setChoose(false);
+                this.updateViews();
             });
             this.views.on('scrollEnd', () => {
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
+                this.setChoose(true);
             });
         },
-        next() {
-            this.update();
+        nextView() {
+            this.updateViews();
             this.timeout = setTimeout(() => {
                 this.views && this.views.next(300, {});
                 clearTimeout(this.timeout);
@@ -68,7 +76,7 @@ export default {
         refresh() {
             this.views && this.views.refresh();
         },
-        update() {
+        updateViews() {
             this.children[0].innerHTML = this.children[3].innerHTML;
             this.children[4].innerHTML = this.children[1].innerHTML;
         }

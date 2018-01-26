@@ -16,6 +16,7 @@ const state = {
     isAssignment: false,
     isStarted: false,
     isViewCard: false,
+    choose: true
 };
 
 export default state;

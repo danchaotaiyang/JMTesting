@@ -9,7 +9,7 @@
             <div class="cardView icn-list">答题卡</div>
         </div>
         <views class="view" ref="subjects" @change="changeViews">
-            <detail v-for="(detail, index) in views" :key="index" :detail="detail" @choose="saveReply"></detail>
+            <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
         </views>
     </div>
 </transition>
@@ -17,9 +17,9 @@
 
 <script>
 import {mapGetters, mapMutations, mapActions} from 'vuex';
-import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/util';
+import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
 import Views from '@/components/views';
-import Detail from '@/components/detail';
+import ViewDetail from '@/components/view-detail';
 
 
 let outs;
@@ -29,13 +29,12 @@ export default {
         return {
             beginAnswer: false,
             keep: false,
-            part: {},
-            views: []
+            part: {}
         };
     },
-    components: {Views, Detail},
+    components: {Views, ViewDetail},
     computed: {
-        ...mapGetters(['type', 'parts', 'paper', 'length', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'isViewCard'])
+        ...mapGetters(['type', 'parts', 'paper', 'length', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'isViewCard'])
     },
     methods: {
         ...mapMutations({
@@ -47,12 +46,14 @@ export default {
             setCurrentOrder: 'SET_CURRENT_ORDER',
             setHasAnswer: 'SET_STATUS_HAS_ANSWER',
             setAssignment: 'SET_STATUS_ASSIGNMENT',
-            setHasReport: 'SET_STATUS_HAS_REPORT'
+            setHasReport: 'SET_STATUS_HAS_REPORT',
+            setKeep: 'SET_STATUS_KEEP'
         }),
         computeView(curOrder) {
             // 计算显示题目
             // 判断当前题号
             // length 题目总数
+            let views = cloneDeep(this.view);
             let length = this.length;
             curOrder = +curOrder || 1;
             curOrder = curOrder > length ? 1 : curOrder;
@@ -77,7 +78,7 @@ export default {
             nextOrder = nextOrder > length ? 1 : nextOrder;
             // 上一组题题号数组
             // let prevOrders = [...gdb.view.map(item => item.order)];
-            let prevOrders = this.views.map(item => item.order);
+            let prevOrders = views.map(item => item.order);
             // 下一组题题号数组
             let nextOrders = [prevOrder, curOrder, nextOrder];
             // 将要获取的题号数组
@@ -87,13 +88,12 @@ export default {
             // 收集要被替换的题号的数组索引
             surplus.forEach(i => index.push(prevOrders.indexOf(i)));
             // 获取将要获取的题号数组内的题目数据添加到视图数据中
-            let views = this.views;
             quest.forEach((item, qat) => {
                 let idx = index.length ? index[qat] : qat;
                 idx = idx > views.length ? 0 : idx;
-                this.$set(this.views, idx, this.paper.find(sub => sub.order === item));
+                views[idx] = this.paper.find(sub => sub.order === item);
             });
-            // this.setView(this.views);
+            this.setView(views);
             // 获取当前题目的索引
             // let curIndex = this.views.findIndex(i => i.order === curOrder);
             // 设置当前题
@@ -123,14 +123,17 @@ export default {
                 // wx.hideLoading();
                 clearTimeout(outs);
                 this.keep = false;
+                this.setKeep(true);
             }, 500);
         },
         changeViews(index) {
-            this.computeView(this.views[index].order);
+            this.computeView(this.view[index].order);
         },
         saveReply(order, reply) {
-            this.views.find(i => i.order === order).reply = reply;
-            this.$refs.subjects.next();
+            let views = cloneDeep(this.view);
+            views.find(i => i.order === order).reply = reply;
+            this.setView(views);
+            this.$refs.subjects.nextView();
         }
     },
     created() {

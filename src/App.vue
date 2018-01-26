@@ -104,7 +104,7 @@ const data = {
 
 import {mapGetters, mapMutations} from 'vuex';
 
-import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/util';
+import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
 
 
 export default {
