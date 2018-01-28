@@ -37,7 +37,7 @@ export default {
     computed: {
         ...mapGetters(['type', 'parts', 'paper', 'length', 'part', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'choose']),
         partName() {
-            return this.part.name.split('：');
+            return this.part.name ? this.part.name.split('：') : [];
         }
     },
     methods: {
