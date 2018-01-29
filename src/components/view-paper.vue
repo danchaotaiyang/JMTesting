@@ -112,7 +112,6 @@ export default {
                         border: 1px solid #f34e4e;
                         color: #fff;
                     }
-
                 }
             }
             &:first-child .name {
