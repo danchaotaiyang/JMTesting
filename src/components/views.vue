@@ -1,5 +1,5 @@
 <template>
-<div class="views" ref="views" @touchend="touchEnd">
+<div class="views" ref="views" @touchmove="touchMove" @touchend="touchEnd">
     <div class="views-group" ref="viewsGroup">
         <slot></slot>
     </div>
@@ -19,7 +19,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['choose'])
+        ...mapGetters(['currentIndex', 'choose'])
     },
     methods: {
         ...mapMutations({
@@ -54,15 +54,15 @@ export default {
                 }
             });
             // 默认选择当前为第一题
-            this.views.goToPage(1, 0, 0);
-
-            this.views.on('scrollStart', () => {
-                this.setChoose(false);
-                this.updateViews();
-            });
+            this.views.goToPage(typeof this.currentIndex === 'undefined' ? 1 : this.currentIndex, 0, 0);
+            this.views.on('scrollStart', this.updateViews);
             this.views.on('scrollEnd', () => {
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
+                this.t = setTimeout(() => {
+                    this.setChoose(true);
+                    clearTimeout(this.t);
+                }, 800);
             });
         },
         nextView() {
@@ -70,7 +70,7 @@ export default {
             this.timeout = setTimeout(() => {
                 this.views && this.views.next(300, {});
                 clearTimeout(this.timeout);
-            }, 500);
+            }, 800);
         },
         refresh() {
             this.views && this.views.refresh();
@@ -79,13 +79,20 @@ export default {
             this.children[0].innerHTML = this.children[3].innerHTML;
             this.children[4].innerHTML = this.children[1].innerHTML;
         },
+        touchMove() {
+            if (!this.choose) {
+                return false;
+            }
+            this.setChoose(false);
+        },
         touchEnd() {
-            this.setChoose(true);
+            this.t = setTimeout(() => {
+                this.setChoose(true);
+                clearTimeout(this.t);
+            }, 800);
         }
     },
     created() {
-    },
-    mounted() {
         setTimeout(() => {
             this._initWidth(true);
             this._initSubject();
@@ -95,6 +102,9 @@ export default {
             this._initWidth();
             this.refresh();
         });
+    },
+    mounted() {
+
     }
 }
 </script>

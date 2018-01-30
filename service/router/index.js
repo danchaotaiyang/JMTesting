@@ -5,6 +5,7 @@ router.use((req, res, next) => {
     res.header("Content-Type", "text/html;charset=utf-8");
     next();
 });
+
 router.get('*', (req, res) => {
     res.render('index');
 });
