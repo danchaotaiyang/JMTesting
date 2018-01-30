@@ -43,6 +43,9 @@ export default {
             setChoose: 'SET_STATUS_CHOOSE'
         }),
         chooseReply(order, reply) {
+            if (!this.choose) {
+                return;
+            }
             this.setChoose(false);
             let paper = this.paper;
             let views = this.view;

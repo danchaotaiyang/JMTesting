@@ -5,7 +5,7 @@
             <div class="introduce">
                 <div class="title"><strong>{{partName[0]}}:</strong><span>{{partName[1]}}</span></div>
                 <div class="viewPaper" @click="showPaper">
-                    <icon name="dot-circle-o"></icon>
+                    <span><icon name="dot-circle-o"></icon></span><span>答题卡</span>
                 </div>
             </div>
             <div class="pagination"><strong>{{currentOrder}}</strong> / {{length}}</div>
@@ -15,7 +15,7 @@
             <detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></detail>
         </views>
         <div class="gesture" v-if="!hasAnswer" @touchmove.stop.prevent="touchMove"></div>
-        <!--<div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>-->
+        <div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>
         <paper></paper>
     </div>
 </transition>
@@ -196,21 +196,23 @@ export default {
                 /*color: #999;*/
             }
             .viewPaper {
-                padding: 1.5vw 1.75vw 1.5vw 2.5vw;
+                display: -webkit-flex;
+                display: flex;
+                -webkit-align-items: center;
+                align-items: center;
+                padding: 1.75vw 1.75vw 1.75vw 2.5vw;
                 background-color: $color-blue;
                 font-weight: 300;
-                font-size: 4vw;
+                font-size: 3vw;
                 color: #fff;
                 @include background-size(auto 2.4vw);
                 @include border-radius(2em 0 0 2em);
                 svg {
-                    float: left;
                     display: block;
                     margin-right: 3px;
                 }
-                &:after {
-                    float: right;
-                    content: '答题卡';
+                span {
+                    display: block;
                 }
             }
         }
@@ -248,7 +250,7 @@ export default {
         bottom: 0;
         left: 0;
         z-index: 10000;
-        background-color: rgba(255, 255, 255, .5);
+        background-color: rgba(255, 255, 255, .01);
     }
     .gesture {
         position: fixed;
