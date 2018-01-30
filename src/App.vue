@@ -4837,7 +4837,7 @@ export default {
             // 设置材料状态
             this.setParts(parts);
             this.setPaper(paper);
-            this.setCurrentOrder(currentOrder);
+            this.setCurrentOrder(+currentOrder);
             this.setHasAnswer(is_answer);
             this.setHasReport(show_status);
             setStorage({

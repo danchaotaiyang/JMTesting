@@ -47,7 +47,7 @@ export default {
     },
     watch: {
         detail(detail) {
-            console.log(detail);
+            // console.log(detail);
         }
     }
 }

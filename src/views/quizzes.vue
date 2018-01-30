@@ -2,7 +2,12 @@
 <transition name="quizzes">
     <div class="quizzes">
         <div class="head">
-            <div class="introduce"><div class="title"><strong>{{partName[0]}}：</strong><span>{{partName[1]}}</span></div><div class="viewPaper" @click="showPaper"><icon name="dot-circle-o"></icon></div></div>
+            <div class="introduce">
+                <div class="title"><strong>{{partName[0]}}：</strong><span>{{partName[1]}}</span></div>
+                <div class="viewPaper" @click="showPaper">
+                    <icon name="dot-circle-o"></icon>
+                </div>
+            </div>
             <!--<div class="hourglass"><icon name="clock-o"></icon>{{remaining || '&#45;&#45;'}}</div>-->
         </div>
         <views ref="view" @change="changeViews">
@@ -26,6 +31,7 @@ import 'vue-awesome/icons/clock-o';
 import 'vue-awesome/icons/dot-circle-o';
 import 'vue-awesome/icons/calendar-check-o';
 import 'vue-awesome/icons/hourglass-start';
+
 export default {
     data() {
         return {

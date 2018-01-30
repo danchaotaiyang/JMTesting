@@ -19,7 +19,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['choose'])
+        ...mapGetters(['currentIndex', 'choose'])
     },
     methods: {
         ...mapMutations({
@@ -54,11 +54,8 @@ export default {
                 }
             });
             // 默认选择当前为第一题
-            this.views.goToPage(1, 0, 0);
-
-            this.views.on('scrollStart', () => {
-                this.updateViews();
-            });
+            this.views.goToPage(typeof this.currentIndex === 'undefined' ? 1 : this.currentIndex, 0, 0);
+            this.views.on('scrollStart', this.updateViews);
             this.views.on('scrollEnd', () => {
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
@@ -96,8 +93,6 @@ export default {
         }
     },
     created() {
-    },
-    mounted() {
         setTimeout(() => {
             this._initWidth(true);
             this._initSubject();
@@ -107,6 +102,9 @@ export default {
             this._initWidth();
             this.refresh();
         });
+    },
+    mounted() {
+
     }
 }
 </script>
