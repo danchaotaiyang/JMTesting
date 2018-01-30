@@ -5,7 +5,7 @@
             <div class="title">雅思能力测评</div>
             <div class="remaining"></div>
         </div>
-        <scroll class="paperBody" ref="scroll">
+        <scroll class="paperBody" ref="scroll" :data="parts">
             <div>
                 <div class="part" v-for="part in parts">
                     <div class="name">{{part.part.name}}</div>
@@ -53,7 +53,7 @@ export default {
     bottom: 0;
     left: 0;
     z-index: 500;
-    background: #ffffff;
+    background: #fff;
     .paperHead {
         height: 10vh;
         padding: 4vw;
@@ -94,7 +94,7 @@ export default {
                     border: 1px solid #e4e4e4;
                     font-weight: 300;
                     text-align: center;
-                    color: #4c9cff;
+                    color: $color-blue;
                     @include border-radius(50%);
                     &:nth-child(5n + 1) {
                         margin-left: 0;
@@ -103,13 +103,13 @@ export default {
                         margin-right: 0;
                     }
                     &.active {
-                        background-color: #4c9cff;
-                        border: 1px solid #4c9cff;
+                        background-color: $color-blue;
+                        border: 1px solid $color-blue;
                         color: #fff;
                     }
                     &.error {
-                        background-color: #f34e4e;
-                        border: 1px solid #f34e4e;
+                        background-color: $color-red;
+                        border: 1px solid $color-red;
                         color: #fff;
                     }
                 }

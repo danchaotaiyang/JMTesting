@@ -3,18 +3,19 @@
     <div class="quizzes">
         <div class="head">
             <div class="introduce">
-                <div class="title"><strong>{{partName[0]}}：</strong><span>{{partName[1]}}</span></div>
+                <div class="title"><strong>{{partName[0]}}:</strong><span>{{partName[1]}}</span></div>
                 <div class="viewPaper" @click="showPaper">
                     <icon name="dot-circle-o"></icon>
                 </div>
             </div>
+            <div class="pagination"><strong>{{currentOrder}}</strong> / {{length}}</div>
             <!--<div class="hourglass"><icon name="clock-o"></icon>{{remaining || '&#45;&#45;'}}</div>-->
         </div>
-        <views ref="view" @change="changeViews">
+        <views ref="views" @change="changeViews">
             <detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></detail>
         </views>
         <div class="gesture" v-if="!hasAnswer" @touchmove.stop.prevent="touchMove"></div>
-        <div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>
+        <!--<div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>-->
         <paper></paper>
     </div>
 </transition>
@@ -43,7 +44,9 @@ export default {
     computed: {
         ...mapGetters(['type', 'parts', 'paper', 'length', 'part', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'choose']),
         partName() {
-            return this.part.name ? this.part.name.split('：') : [];
+            let partName = this.part;
+            console.log(partName);
+            return this.part.name ? this.part.name.split(/:|：/) : [];
         }
     },
     methods: {
@@ -135,7 +138,7 @@ export default {
             let views = cloneDeep(this.view);
             views.find(i => i.order === order).reply = reply;
             this.setView(views);
-            this.$refs.view.nextView();
+            this.$refs.views.nextView();
             if (!this.hasAnswer) {
                 this.setAnswer(true);
                 setStorage({
@@ -190,16 +193,11 @@ export default {
                 color: #131313;
             }
             strong {
-                color: #999;
+                /*color: #999;*/
             }
             .viewPaper {
-
-                /*padding: 1.5vw 2vw;*/
-                /*padding: 1.5vw 1.75vw 1.5vw 7.5vw;*/
                 padding: 1.5vw 1.75vw 1.5vw 2.5vw;
-                background-color: #4c9cff;
-                /*border: 1px solid #4c9cff;*/
-                /*border-right: none;*/
+                background-color: $color-blue;
                 font-weight: 300;
                 font-size: 4vw;
                 color: #fff;
@@ -214,6 +212,16 @@ export default {
                     float: right;
                     content: '答题卡';
                 }
+            }
+        }
+        .pagination {
+            width: 21%;
+            font-size: 3.7333vw;
+            color: #868895;
+            text-align: right;
+            strong {
+                font-size: 4.8vw;
+                color: #4c9cff;
             }
         }
         .period,

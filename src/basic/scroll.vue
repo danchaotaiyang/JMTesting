@@ -9,6 +9,9 @@ import BScroll from 'better-scroll';
 
 export default {
     props: {
+        data: {
+            default: null
+        },
         probType: {
             type: Number,
             default: 1
@@ -16,10 +19,6 @@ export default {
         click: {
             type: Boolean,
             default: false
-        },
-        data: {
-            type: Array,
-            default: null
         },
         listenScroll: {
             type: Boolean,

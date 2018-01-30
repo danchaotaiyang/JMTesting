@@ -35,6 +35,9 @@ const mutations = {
     [types.SET_STATUS_ASSIGNMENT](state, isAssignment) {
         state.isAssignment = isAssignment;
     },
+    [types.SET_STATUS_READ](state, isRead) {
+        state.isRead = isRead;
+    },
     [types.SET_STATUS_VIEW_PAPER](state, viewPaper) {
         state.viewPaper = viewPaper;
     },
