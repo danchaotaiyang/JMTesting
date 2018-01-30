@@ -1,5 +1,5 @@
 <template>
-<transition name="view-paper">
+<transition name="paper">
     <div class="paper" v-if="viewPaper" @click.stop.prevent="hidePaper">
         <div class="paperHead">
             <div class="title">雅思能力测评</div>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import Scroll from '@/components/scroll';
+import Scroll from '@/basic/scroll';
 import {mapGetters, mapMutations} from 'vuex';
 
 export default {

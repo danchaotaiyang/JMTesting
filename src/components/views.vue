@@ -1,5 +1,5 @@
 <template>
-<div class="views" ref="views">
+<div class="views" ref="views" @touchmove="touchMove" @touchend="touchEnd">
     <div class="views-group" ref="viewsGroup">
         <slot></slot>
     </div>
@@ -57,16 +57,15 @@ export default {
             this.views.goToPage(1, 0, 0);
 
             this.views.on('scrollStart', () => {
-                this.setChoose(false);
                 this.updateViews();
             });
             this.views.on('scrollEnd', () => {
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
-                this.setChoose(true);
-            });
-            this.views.on('scrollCancal', () => {
-                this.setChoose(true);
+                this.t = setTimeout(() => {
+                    this.setChoose(true);
+                    clearTimeout(this.t);
+                }, 800);
             });
         },
         nextView() {
@@ -74,7 +73,7 @@ export default {
             this.timeout = setTimeout(() => {
                 this.views && this.views.next(300, {});
                 clearTimeout(this.timeout);
-            }, 500);
+            }, 800);
         },
         refresh() {
             this.views && this.views.refresh();
@@ -82,6 +81,18 @@ export default {
         updateViews() {
             this.children[0].innerHTML = this.children[3].innerHTML;
             this.children[4].innerHTML = this.children[1].innerHTML;
+        },
+        touchMove() {
+            if (!this.choose) {
+                return false;
+            }
+            this.setChoose(false);
+        },
+        touchEnd() {
+            this.t = setTimeout(() => {
+                this.setChoose(true);
+                clearTimeout(this.t);
+            }, 800);
         }
     },
     created() {

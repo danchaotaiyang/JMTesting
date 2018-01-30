@@ -1,7 +1,7 @@
 <template>
 <div class="detail">
     {{detail.order || ''}}
-    <div class="stuff" v-if="detail.hasStuff">有材料</div>
+    <stuff class="stuff" v-if="detail.hasStuff" :data="detail.stuff"></stuff>
     <div class="options">
         <div v-for="option in detail.options" @click="chooseReply(detail.order, option.op_key)" :class="{'active': option.op_key === detail.reply}">
             <span>{{option.op_content}}</span>
@@ -11,9 +11,12 @@
 </template>
 
 <script>
+import Stuff from '@/components/stuff';
 import {mapGetters, mapMutations} from 'vuex';
 import {cloneDeep} from '@/assets/js/utils';
+
 export default {
+    components: {Stuff},
     props: {
         detail: {
             type: Object,
@@ -59,6 +62,7 @@ export default {
         padding: 1em;
     }
 }
+
 .active {
     color: red;
 }

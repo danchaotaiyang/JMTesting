@@ -6,19 +6,19 @@
             <!--<div class="hourglass"><icon name="clock-o"></icon>{{remaining || '&#45;&#45;'}}</div>-->
         </div>
         <views ref="view" @change="changeViews">
-            <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
+            <detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></detail>
         </views>
-        <view-paper></view-paper>
+        <div class="gesture" v-if="!hasAnswer" @touchmove.stop.prevent="touchMove"></div>
         <div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>
-        <div class="gesture" v-if="!hasAnswer"></div>
+        <paper></paper>
     </div>
 </transition>
 </template>
 
 <script>
 import Views from '@/components/views';
-import ViewDetail from '@/components/view-detail';
-import ViewPaper from '@/components/view-paper';
+import Detail from '@/components/detail';
+import Paper from '@/components/paper';
 import Icon from 'vue-awesome/components/Icon';
 import {mapGetters, mapMutations} from 'vuex';
 import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
@@ -33,7 +33,7 @@ export default {
             keep: false
         };
     },
-    components: {Views, ViewDetail, ViewPaper, Icon},
+    components: {Views, Detail, Paper, Icon},
     computed: {
         ...mapGetters(['type', 'parts', 'paper', 'length', 'part', 'view', 'currentOrder', 'currentIndex', 'remaining', 'hasAnswer', 'hasReport', 'isAssignment', 'choose']),
         partName() {
@@ -109,7 +109,7 @@ export default {
         setCurrent(curSubject) {
             // 获取上一题音频材料地址
             // 获取当前题材料信息
-            let {hasStuffText, hasStuffAudio, hasStuffImg, stuff} = curSubject, hasStuff = hasStuffText || hasStuffAudio || hasStuffImg;
+            let {hasStuffText, hasStuffAudio, hasStuffImg, hasStuff, stuff} = curSubject;
             // 判断：当前题目音频材料并设置状态
             if (!hasStuffAudio || hasStuffAudio && (!this.audioSrc || this.audioSrc !== stuff.audio[0])) {
                 // this.audioPause();
@@ -117,15 +117,10 @@ export default {
             }
             // this.order = order;
             // this.setCurrentIndex(curIndex);
-            this.stuff = stuff;
-            this.hasStuff = hasStuff;
-            this.hasStuffText = hasStuffText;
-            this.hasStuffAudio = hasStuffAudio;
-            this.hasStuffImg = hasStuffImg;
-            this.outs = setTimeout(() => {
+            this.t = setTimeout(() => {
                 this.setChoose(true);
-                clearTimeout(this.outs);
-            }, 80);
+                clearTimeout(this.t);
+            }, 800);
         },
         changeViews(index) {
             this.computeView(this.view[index].order);

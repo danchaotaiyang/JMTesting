@@ -4777,7 +4777,7 @@ const data = {
 };
 
 import {mapGetters, mapMutations} from 'vuex';
-import {difference, cloneDeep, isEmpty, getStorage, setStorage} from '@/assets/js/utils';
+import {difference, cloneDeep, isEmpty, getStorage, setStorage, getLocalhostIP} from '@/assets/js/utils';
 
 export default {
     methods: {
@@ -4810,6 +4810,7 @@ export default {
                 item['hasStuffText'] = !isEmpty(item.stuff.text);
                 item['hasStuffAudio'] = !isEmpty(item.stuff.audio);
                 item['hasStuffImg'] = !isEmpty(item.stuff.images);
+                item['hasStuff'] = !isEmpty(item.stuff.text) || !isEmpty(item.stuff.audio) || !isEmpty(item.stuff.images);
                 return item;
             });
             parts.forEach(item => {
@@ -4853,6 +4854,7 @@ export default {
         }
     },
     created() {
+        getLocalhostIP();
         setTimeout(() => {
             this.initQuizzes();
         }, 20);
