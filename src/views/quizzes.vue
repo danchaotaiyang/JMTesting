@@ -8,9 +8,9 @@
         <views ref="view" @change="changeViews">
             <view-detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></view-detail>
         </views>
+        <div class="gesture" v-if="!hasAnswer" @touchmove.stop.prevent="touchMove"></div>
         <view-paper></view-paper>
         <div class="viewLock" v-show="!choose" @touchmove.stop.prevent="touchMove"></div>
-        <div class="gesture" v-if="!hasAnswer"></div>
     </div>
 </transition>
 </template>
@@ -90,6 +90,9 @@ export default {
             let nextOrders = [prevOrder, curOrder, nextOrder];
             // 将要获取的题号数组
             let quest = difference(nextOrders, prevOrders);
+            if (quest.length === 0) {
+                return;
+            }
             // 被替换的题号数组
             let surplus = difference(prevOrders, nextOrders), index = [];
             // 收集要被替换的题号的数组索引
@@ -245,6 +248,7 @@ export default {
         position: fixed;
         right: 23.2vw;
         bottom: 18.1333vw;
+        z-index: 0;
         width: 18.4vw;
         height: 26.2667vw;
         background: url("data:image/png;base64,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") no-repeat 0 0;

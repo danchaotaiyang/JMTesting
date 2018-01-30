@@ -1,5 +1,5 @@
 <template>
-<div class="views" ref="views">
+<div class="views" ref="views" @touchend="touchEnd">
     <div class="views-group" ref="viewsGroup">
         <slot></slot>
     </div>
@@ -63,10 +63,6 @@ export default {
             this.views.on('scrollEnd', () => {
                 this.setCurrentIndex(this.views.getCurrentPage().pageX);
                 this.$emit('change', this.views.getCurrentPage().pageX);
-                this.setChoose(true);
-            });
-            this.views.on('scrollCancal', () => {
-                this.setChoose(true);
             });
         },
         nextView() {
@@ -82,6 +78,9 @@ export default {
         updateViews() {
             this.children[0].innerHTML = this.children[3].innerHTML;
             this.children[4].innerHTML = this.children[1].innerHTML;
+        },
+        touchEnd() {
+            this.setChoose(true);
         }
     },
     created() {
