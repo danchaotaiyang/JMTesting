@@ -87,13 +87,13 @@ export default {
     }
     .scroll {
         position: relative;
-        height: calc(100vh - 10.7794vh);
+        height: calc(100vh - #{$height-head});
         overflow: hidden;
         &.hasStuff {
-            height: calc(100vh - 10.7794vh - 30.9618vh);
+            height: calc(100vh - #{$height-head} - 30.9618vh);
         }
         &.isRead {
-            height: calc(100vh - 10.7794vh - 75.2072vh);
+            height: calc(100vh - #{$height-head} - 75.2072vh);
         }
     }
     .options {

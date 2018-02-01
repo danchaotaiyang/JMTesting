@@ -16,7 +16,7 @@ const state = {
     isAssignment: false,
     isRead: false,
     viewPaper: false,
-    choose: false
+    choose: true
 };
 
 export default state;

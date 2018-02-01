@@ -9,7 +9,6 @@
                 </div>
             </div>
             <div class="pagination"><strong>{{currentOrder}}</strong> / {{length}}</div>
-            <!--<div class="hourglass"><icon name="clock-o"></icon>{{remaining || '&#45;&#45;'}}</div>-->
         </div>
         <views ref="views" @change="changeViews">
             <detail v-for="(detail, index) in view" :key="index" :detail="detail" @choose="saveReply"></detail>
@@ -119,17 +118,6 @@ export default {
             // 获取上一题音频材料地址
             // 获取当前题材料信息
             let {hasStuffText, hasStuffAudio, hasStuffImg, hasStuff, stuff} = curSubject;
-            // 判断：当前题目音频材料并设置状态
-            if (!hasStuffAudio || hasStuffAudio && (!this.audioSrc || this.audioSrc !== stuff.audio[0])) {
-                // this.audioPause();
-                this.audioSrc = stuff.audio[0];
-            }
-            // this.order = order;
-            // this.setCurrentIndex(curIndex);
-            this.t = setTimeout(() => {
-                this.setChoose(true);
-                clearTimeout(this.t);
-            }, 800);
         },
         changeViews(index) {
             this.computeView(this.view[index].order);
@@ -172,7 +160,7 @@ export default {
         position: relative;
         z-index: 5;
         width: 100vw;
-        height: 10.7794vh;
+        height: $height-head;
         background: #eee;
         overflow: hidden;
         @include box-sizing(border-box);
@@ -250,7 +238,7 @@ export default {
         bottom: 0;
         left: 0;
         z-index: 10000;
-        background-color: rgba(255, 255, 255, .01);
+        background-color: rgba(255, 255, 255, .1);
     }
     .gesture {
         position: fixed;

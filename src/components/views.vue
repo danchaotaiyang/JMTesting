@@ -1,5 +1,5 @@
 <template>
-<div class="views" ref="views" @touchmove="touchMove" @touchend="touchEnd">
+<div class="views" ref="views">
     <div class="views-group" ref="viewsGroup">
         <slot></slot>
     </div>
@@ -10,7 +10,7 @@
 import BScroll from 'better-scroll';
 import {mapGetters, mapMutations} from 'vuex';
 import {addClass} from '@/assets/js/dom';
-
+let t1, t2;
 export default {
     props: {
         loop: {
@@ -19,7 +19,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters(['currentIndex', 'choose'])
+        ...mapGetters(['length', 'currentOrder', 'currentIndex', 'choose'])
     },
     methods: {
         ...mapMutations({
@@ -28,9 +28,9 @@ export default {
         }),
         _initWidth(isInit) {
             this.children = this.$refs.viewsGroup.children;
-            let width = 0;
+            let width = 0, length = this.children.length;
             let subjectWidth = this.$refs.views.clientWidth;
-            for (let i = 0; i < this.children.length; i++) {
+            for (let i = 0; i < length; i++) {
                 let child = this.children[i];
                 addClass(child, 'subject');
                 child.style.width = subjectWidth + 'px';
@@ -57,20 +57,28 @@ export default {
             this.views.goToPage(typeof this.currentIndex === 'undefined' ? 1 : this.currentIndex, 0, 0);
             this.views.on('scrollStart', this.updateViews);
             this.views.on('scrollEnd', () => {
-                this.setCurrentIndex(this.views.getCurrentPage().pageX);
-                this.$emit('change', this.views.getCurrentPage().pageX);
-                this.t = setTimeout(() => {
+                let pageX = this.views.getCurrentPage().pageX;
+                console.log(this.currentIndex,pageX);
+                if (this.currentIndex === pageX) {
+                    return;
+                }
+                this.setCurrentIndex(pageX);
+                this.$emit('change', pageX);
+                t1 = setTimeout(() => {
                     this.setChoose(true);
-                    clearTimeout(this.t);
-                }, 800);
+                    clearTimeout(t1);
+                }, 500);
             });
         },
         nextView() {
+            if (this.currentOrder === this.length) {
+                return;
+            }
             this.updateViews();
-            this.timeout = setTimeout(() => {
-                this.views && this.views.next(300, {});
-                clearTimeout(this.timeout);
-            }, 800);
+            t2 = setTimeout(() => {
+                this.views && this.views.next(500, {});
+                clearTimeout(t2);
+            }, 500);
         },
         refresh() {
             this.views && this.views.refresh();
@@ -78,18 +86,6 @@ export default {
         updateViews() {
             this.children[0].innerHTML = this.children[3].innerHTML;
             this.children[4].innerHTML = this.children[1].innerHTML;
-        },
-        touchMove() {
-            if (!this.choose) {
-                return false;
-            }
-            this.setChoose(false);
-        },
-        touchEnd() {
-            this.t = setTimeout(() => {
-                this.setChoose(true);
-                clearTimeout(this.t);
-            }, 800);
         }
     },
     created() {
